@@ -5,9 +5,9 @@
 #include <fstream>
 #include <opencv2/opencv.hpp>
 
-#include <tensorflow/contrib/lite/model.h>
-#include <tensorflow/contrib/lite/interpreter.h>
-#include <tensorflow/contrib/lite/kernels/register.h>
+#include <tensorflow/lite/model.h>
+#include <tensorflow/lite/interpreter.h>
+#include <tensorflow/lite/kernels/register.h>
 
 #include <ft2build.h>
 #include <freetype/freetype.h>

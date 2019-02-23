@@ -1,5 +1,5 @@
 CXXFLAGS ?= -IC:/dev/godev/src/github.com/tensorflow/tensorflow -Ic:/msys64/mingw64/include/opencv4 -Ic:/msys64/mingw64/include/freetype2
-LDFLAGS ?= -LC:/dev/godev/src/github.com/tensorflow/tensorflow/tensorflow/contrib/lite/tools/make/gen/windows_x86_64/lib
+LDFLAGS ?= -LC:/dev/godev/src/github.com/tensorflow/tensorflow/tensorflow/lite/tools/make/gen/windows_x86_64/lib
 
 .PHONY: all clean
 
