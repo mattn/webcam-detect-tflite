@@ -183,6 +183,10 @@ main(int argc, char const * argv[]) {
   interpreter->UseNNAPI(1);
 
   std::ifstream fontfile("mplus-1c-thin.ttf", std::ios::in | std::ios::binary);
+  if (!fontfile) {
+    std::cerr << "Failed to read font file" << std::endl;
+    return -1;
+  }
   std::vector<uint8_t> fontdata(
       (std::istreambuf_iterator<char>(fontfile)),
       std::istreambuf_iterator<char>());
