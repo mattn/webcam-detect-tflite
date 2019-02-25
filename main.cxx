@@ -105,11 +105,11 @@ public:
 template<typename T>
 void
 fill(T *in, cv::Mat& src) {
-  int n = 0;
+  int n = 0, nc = src.channels(), ne = src.elemSize();
   for (int y = 0; y < src.rows; ++y)
     for (int x = 0; x < src.cols; ++x)
-      for (int c = 0; c < src.channels(); ++c)
-        in[n++] = src.data[y * src.step + x * src.elemSize() + c];
+      for (int c = 0; c < nc; ++c)
+        in[n++] = src.data[y * src.step + x * ne + c];
 }
 
 int
