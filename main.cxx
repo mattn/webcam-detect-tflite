@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <vector>
 #include <chrono>
 #include <iostream>
@@ -88,7 +89,7 @@ public:
           for (bit = 7; bit >= 0; --bit) {
             if (loc.x + col * 8 + (7 - bit) > img.cols)
               continue;
-            if ((cl >> bit) & 0x01 == 1) {
+            if (((cl >> bit) & 0x01) == 1) {
               ptr[loc.x + col * 8 + (7 - bit)][0] = color[0];
               ptr[loc.x + col * 8 + (7 - bit)][1] = color[1];
               ptr[loc.x + col * 8 + (7 - bit)][2] = color[2];
