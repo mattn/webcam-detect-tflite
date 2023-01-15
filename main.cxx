@@ -4,11 +4,17 @@
 #include <iostream>
 #include <iostream>
 #include <fstream>
+#include <ctime>
 #include <opencv2/opencv.hpp>
 
 #include <tensorflow/lite/model.h>
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>
+#if 0
+#include <tensorflow/lite/delegates/gpu/gl_delegate.h>
+#else
+#include <tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h>
+#endif
 
 #include <ft2build.h>
 #include <freetype/freetype.h>
@@ -136,6 +142,30 @@ main(int argc, char const * argv[]) {
   }
   tflite::ops::builtin::BuiltinOpResolver resolver;
   tflite::InterpreterBuilder(*model, resolver)(&interpreter);
+
+#if 0
+  const TfLiteGpuDelegateOptions kDefaultOptions = {
+    .metadata = nullptr,
+    .compile_options = {
+      .precision_loss_allowed = 1,  // false
+      .preferred_gl_object_type = TFLITE_GL_OBJECT_TYPE_FASTEST,
+      .dynamic_batch_enabled = 1,  // false
+    },
+  };
+  auto* delegate = TfLiteGpuDelegateCreate(&kDefaultOptions);
+  if (interpreter->ModifyGraphWithDelegate(delegate) != kTfLiteOk) {
+    return -1;
+  }
+#else
+  const TfLiteXNNPackDelegateOptions kDefaultOptions = {
+    .num_threads = 4,
+  };
+  auto* delegate = TfLiteXNNPackDelegateCreate(&kDefaultOptions);
+  if (interpreter->ModifyGraphWithDelegate(delegate) != kTfLiteOk) {
+    return -1;
+  }
+#endif
+
   status = interpreter->AllocateTensors();
 
   if (status != kTfLiteOk) {
@@ -181,7 +211,6 @@ main(int argc, char const * argv[]) {
   }
 
   interpreter->SetNumThreads(4);
-  interpreter->UseNNAPI(1);
 
   std::ifstream fontfile("mplus-1c-thin.ttf", std::ios::in | std::ios::binary);
   if (!fontfile) {
@@ -193,6 +222,9 @@ main(int argc, char const * argv[]) {
       std::istreambuf_iterator<char>());
   ft_renderer ftw(fontdata);
 
+  int frames = 0;
+  clock_t prev = clock();
+  std::string fpss;
   while (true) {
     cv::Mat frame;
     cap >> frame;
@@ -255,6 +287,19 @@ main(int argc, char const * argv[]) {
       if (++n >= 3)
         break;
     }
+
+    clock_t now = clock();
+    if (((now - prev) / CLOCKS_PER_SEC / 1) > 0) {
+      std::stringstream ss;
+      ss << frames << "fps";
+      fpss = ss.str();
+      std::cout << fpss << std::endl;
+      frames = 1;
+      prev = now;
+    }
+    ftw.putText(frame, fpss,  cv::Point(50, 20), 16,
+        cv::Scalar(255,255,255), false);
+    frames++;
 
     cv::imshow("window", frame);
   }
