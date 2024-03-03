@@ -1,20 +1,19 @@
-#include <cstdint>
+//#include <cstdint>
 #include <vector>
 #include <chrono>
 #include <iostream>
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <memory>
+#include <utility>
+#include <type_traits>
 #include <opencv2/opencv.hpp>
 
 #include <tensorflow/lite/model.h>
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>
-#if 0
-#include <tensorflow/lite/delegates/gpu/gl_delegate.h>
-#else
 #include <tensorflow/lite/delegates/xnnpack/xnnpack_delegate.h>
-#endif
 
 #include <ft2build.h>
 #include <freetype/freetype.h>
@@ -143,20 +142,6 @@ main(int argc, char const * argv[]) {
   tflite::ops::builtin::BuiltinOpResolver resolver;
   tflite::InterpreterBuilder(*model, resolver)(&interpreter);
 
-#if 0
-  const TfLiteGpuDelegateOptions kDefaultOptions = {
-    .metadata = nullptr,
-    .compile_options = {
-      .precision_loss_allowed = 1,  // false
-      .preferred_gl_object_type = TFLITE_GL_OBJECT_TYPE_FASTEST,
-      .dynamic_batch_enabled = 1,  // false
-    },
-  };
-  auto* delegate = TfLiteGpuDelegateCreate(&kDefaultOptions);
-  if (interpreter->ModifyGraphWithDelegate(delegate) != kTfLiteOk) {
-    return -1;
-  }
-#else
   const TfLiteXNNPackDelegateOptions kDefaultOptions = {
     .num_threads = 4,
   };
@@ -164,7 +149,6 @@ main(int argc, char const * argv[]) {
   if (interpreter->ModifyGraphWithDelegate(delegate) != kTfLiteOk) {
     return -1;
   }
-#endif
 
   status = interpreter->AllocateTensors();
 
