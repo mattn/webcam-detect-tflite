@@ -1,4 +1,6 @@
 TENSORFLOW_ROOT=/home/mattn/dev/tensorflow/tensorflow
+
+# The path to the location which you built tensorflow-lite with cmake.
 TENSORFLOW_CBUILD=$(TENSORFLOW_ROOT)/lite/cbuild
 CXXFLAGS ?= -g -I $(TENSORFLOW_ROOT) \
 	-I $(TENSORFLOW_CBUILD)/flatbuffers/include \
